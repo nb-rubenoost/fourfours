@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="fourfours.Benchmarks/fourfours.Benchmarks.csproj" />
+  <Project Path="fourfours.Core/fourfours.Core.csproj" />
+  <Project Path="fourfours.Tests/fourfours.Tests.csproj" />
+  <Project Path="fourfours/fourfours.csproj" />
+</Solution>
