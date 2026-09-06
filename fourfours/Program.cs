@@ -1,6 +1,6 @@
 ﻿using fourfours.Core;
 
-var solver = new FFSolver(4, 4, 4, 4);
+var solver = FFSolverFactory.CreateSolver(4, 4, 4, 4);
 var solution = solver.Solve();
 
 foreach(var key in solution.SortedKeys)

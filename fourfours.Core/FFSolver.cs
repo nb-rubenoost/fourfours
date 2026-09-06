@@ -1,4 +1,3 @@
-using fourfours.Core.Helpers;
 using MathNet.Numerics;
 
 namespace fourfours.Core;
@@ -23,14 +22,14 @@ public sealed class FFSolver
         AddSolution(tempStorage, [4, 4], 44, "44");
         AddSolution(tempStorage, [4, 4, 4], 444, "444");
         AddSolution(tempStorage, [4, 4, 4, 4], 4444, "4444");
-        
+
         //AddSolution(tempStorage, [4], 0.4d, ".4");
         //AddSolution(tempStorage, [4, 4], 0.44d, ".44");
         //AddSolution(tempStorage, [4, 4, 4], 0.444d, ".444");
         //AddSolution(tempStorage, [4, 4, 4, 4], 0.4444d, ".4444");
-        
+
         //AddSolution(tempStorage, [4], (double) 4 / 9, ".444444....");
-        
+
         for (var totalNumberCount = 2; totalNumberCount <= k; totalNumberCount++)
         {
             var limitA = totalNumberCount - 1;
@@ -54,9 +53,12 @@ public sealed class FFSolver
                         {
                             foreach (var (solutionB, expressionB) in solutionsB)
                             {
-                                AddSolution(tempStorage, combinedNumberset, solutionA + solutionB, $"({expressionA} + {expressionB})");
-                                AddSolution(tempStorage, combinedNumberset, solutionA - solutionB, $"({expressionA} - {expressionB})");
-                                AddSolution(tempStorage, combinedNumberset, solutionA * solutionB, $"({expressionA} * {expressionB})");
+                                AddSolution(tempStorage, combinedNumberset, solutionA + solutionB,
+                                    $"({expressionA} + {expressionB})");
+                                AddSolution(tempStorage, combinedNumberset, solutionA - solutionB,
+                                    $"({expressionA} - {expressionB})");
+                                AddSolution(tempStorage, combinedNumberset, solutionA * solutionB,
+                                    $"({expressionA} * {expressionB})");
                                 if (solutionB != 0)
                                 {
                                     AddSolution(tempStorage, combinedNumberset, solutionA / solutionB,
@@ -109,7 +111,7 @@ public sealed class FFSolver
             }
         }
     }
-    
+
     private double Factorial(double n)
     {
         if (n < 0) throw new ArgumentException("Negative input is not allowed.", nameof(n));
@@ -119,9 +121,10 @@ public sealed class FFSolver
         {
             result *= i;
         }
+
         return result;
     }
-    
+
     private void AddSolution_Impl(
         Dictionary<int, Dictionary<NumberSet, Dictionary<double, string>>> tempStorage,
         NumberSet numberSet,
@@ -143,6 +146,84 @@ public sealed class FFSolver
         if (!solutions.ContainsKey(solution))
         {
             solutions[solution] = expression;
+        }
+    }
+
+    private sealed class NumberSet : IEquatable<NumberSet>
+    {
+        private readonly int[] _numbers;
+
+        public int Count => _numbers.Length;
+
+        public NumberSet(params int[] numbers)
+        {
+            _numbers = numbers;
+            Array.Sort(_numbers);
+        }
+
+        /// <summary>
+        /// Checks if this is a subset, but also takes into account the occurence of numbers. For example, {1, 1, 2} is not a subset of {1, 2}.
+        /// </summary>
+        public bool IsSubsetOf(NumberSet other)
+        {
+            var thisCounts = GetCounts(_numbers);
+            var otherCounts = GetCounts(other._numbers);
+
+            foreach (var kvp in thisCounts)
+            {
+                if (!otherCounts.TryGetValue(kvp.Key, out var count) || count < kvp.Value)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public static NumberSet operator +(NumberSet set1, NumberSet set2)
+        {
+            var combinedNumbers = new int[set1._numbers.Length + set2._numbers.Length];
+            Array.Copy(set1._numbers, combinedNumbers, set1._numbers.Length);
+            Array.Copy(set2._numbers, 0, combinedNumbers, set1._numbers.Length, set2._numbers.Length);
+            return new NumberSet(combinedNumbers);
+        }
+
+        private static Dictionary<int, int> GetCounts(int[] numbers)
+        {
+            var counts = new Dictionary<int, int>();
+            foreach (var number in numbers)
+            {
+                if (counts.ContainsKey(number))
+                {
+                    counts[number]++;
+                }
+                else
+                {
+                    counts[number] = 1;
+                }
+            }
+
+            return counts;
+        }
+
+        public bool Equals(NumberSet? other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return _numbers.SequenceEqual(other._numbers);
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is null) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != GetType()) return false;
+            return Equals((NumberSet)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return _numbers.Aggregate(17, (hash, number) => hash * 31 + number);
         }
     }
 }
