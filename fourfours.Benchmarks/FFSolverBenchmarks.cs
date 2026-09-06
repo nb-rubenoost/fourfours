@@ -7,17 +7,21 @@ namespace fourfours.Benchmarks;
 public class FFSolverBenchmarks
 {
     // Same case as the console app in ../fourfours/Program.cs
-    [Benchmark]
-    public FFSolution Solve_Baseline()
+    [Benchmark(Baseline = true)]
+    public FFSolution Solver1_4444()
     {
-        var solver = new FFSolver(4, 4, 4, 4);
-        return solver.Solve();
+        return FFSolver.Solve(4, 4, 4, 4);
+    }
+
+    [Benchmark]
+    public FFSolution Solver2_4444()
+    {
+        return FFSolver2.Solve(4, 4, 4, 4);
     }
     
     [Benchmark]
-    public FFSolution Solve()
+    public FFSolution Solver2_1234()
     {
-        var solver = FFSolverFactory.CreateSolver(4, 4, 4, 4);
-        return solver.Solve();
+        return FFSolver2.Solve(1, 2, 3, 4);
     }
 }

@@ -2,17 +2,12 @@ using MathNet.Numerics;
 
 namespace fourfours.Core;
 
-public sealed class FFSolver
+public static class FFSolver
 {
-    private readonly NumberSet _numbers;
-
-    public FFSolver(params int[] numbers)
+    public static FFSolution Solve(params int[] numbers)
     {
-        _numbers = new NumberSet(numbers);
-    }
-
-    public FFSolution Solve()
-    {
+        var _numbers = new NumberSet(numbers);
+        
         var k = _numbers.Count;
 
         var tempStorage = new Dictionary<int, Dictionary<NumberSet, Dictionary<double, string>>>();
@@ -79,7 +74,7 @@ public sealed class FFSolver
             .ToDictionary(x => (long)x.Key, x => x.First().Value));
     }
 
-    private void AddSolution(
+    private static void AddSolution(
         Dictionary<int, Dictionary<NumberSet, Dictionary<double, string>>> tempStorage,
         int[] numbers,
         double solution,
@@ -88,7 +83,7 @@ public sealed class FFSolver
         AddSolution(tempStorage, new NumberSet(numbers), solution, expression);
     }
 
-    private void AddSolution(
+    private static void AddSolution(
         Dictionary<int, Dictionary<NumberSet, Dictionary<double, string>>> tempStorage,
         NumberSet numberSet,
         double solution,
@@ -112,7 +107,7 @@ public sealed class FFSolver
         }
     }
 
-    private double Factorial(double n)
+    private static double Factorial(double n)
     {
         if (n < 0) throw new ArgumentException("Negative input is not allowed.", nameof(n));
         if (n == 0 || n == 1) return 1;
@@ -125,7 +120,7 @@ public sealed class FFSolver
         return result;
     }
 
-    private void AddSolution_Impl(
+    private static void AddSolution_Impl(
         Dictionary<int, Dictionary<NumberSet, Dictionary<double, string>>> tempStorage,
         NumberSet numberSet,
         double solution,
