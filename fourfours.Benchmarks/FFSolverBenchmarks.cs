@@ -24,4 +24,16 @@ public class FFSolverBenchmarks
     {
         return FFSolver2.Solve(1, 2, 3, 4);
     }
+    
+    [Benchmark]
+    public FFSolution Solver3_4444()
+    {
+        return FFSolver3.Solve(4, 4, 4, 4);
+    }
+    
+    [Benchmark]
+    public FFSolution Solver3_1234()
+    {
+        return FFSolver3.Solve(1, 2, 3, 4);
+    }
 }
